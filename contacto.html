@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es-CO" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contacto — DEFRULE MUSIC</title>
+<meta name="description" content="Escríbenos por WhatsApp o visita nuestro showroom en Chapinero, Bogotá.">
+<meta name="theme-color" content="#07080d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-page="contacto">
+<main>
+  <section class="section">
+    <div class="container">
+      <span class="eyebrow"><i data-lucide="message-circle"></i> Contacto</span>
+      <h1 class="h-display" style="font-size:clamp(2.2rem,5vw,3.4rem)">Hablemos de <span class="grad">música</span></h1>
+      <p class="lead" style="margin-bottom:36px">El canal más rápido es WhatsApp. También puedes escribirnos o visitarnos.</p>
+
+      <div class="contact-grid">
+        <div style="display:flex;flex-direction:column;gap:14px" data-reveal-group>
+          <a class="info-row" target="_blank" rel="noopener" href="https://wa.me/573219585712?text=Hola%20DEFRULE%20MUSIC" style="text-decoration:none">
+            <span class="ic" style="background:rgba(37,211,102,.15);color:var(--wa)"><i data-lucide="message-circle"></i></span>
+            <span><b>WhatsApp</b><br><span style="color:var(--muted)">+57 321 958 5712 · respuesta en horas hábiles</span></span>
+          </a>
+          <a class="info-row" href="mailto:hola@defrulemusic.co" style="text-decoration:none">
+            <span class="ic"><i data-lucide="mail"></i></span>
+            <span><b>Correo</b><br><span style="color:var(--muted)">hola@defrulemusic.co</span></span>
+          </a>
+          <div class="info-row">
+            <span class="ic"><i data-lucide="map-pin"></i></span>
+            <span><b>Showroom</b><br><span style="color:var(--muted)">Cra 13 # 45-20, Chapinero, Bogotá</span></span>
+          </div>
+          <div class="info-row">
+            <span class="ic"><i data-lucide="clock"></i></span>
+            <span><b>Horario</b><br><span style="color:var(--muted)">Lun–Sáb · 9:00 a. m. – 7:00 p. m.</span></span>
+          </div>
+          <div class="info-row">
+            <span class="ic"><i data-lucide="instagram"></i></span>
+            <span><b>Instagram</b><br><span style="color:var(--muted)">@defrulemusic</span></span>
+          </div>
+        </div>
+
+        <div class="b-cell" data-reveal style="padding:30px">
+          <h3 style="font-weight:800;margin-bottom:6px">Escríbenos</h3>
+          <p style="color:var(--muted);font-size:.92rem;margin:0 0 18px">Cuéntanos qué buscas y te llevamos la conversación a WhatsApp.</p>
+          <form class="form-grid" id="cform">
+            <div><label for="c-n">Nombre</label><input id="c-n" required placeholder="Tu nombre"></div>
+            <div><label for="c-i">¿Qué te interesa?</label><input id="c-i" required placeholder="Ej: una Strat para rock"></div>
+            <div><label for="c-m">Mensaje</label><textarea id="c-m" rows="4" required placeholder="Escribe tu mensaje…"></textarea></div>
+            <button class="btn btn-wa btn-lg btn-block" type="submit" id="c-send">Enviar por WhatsApp</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="assets/vendor/gsap.min.js"></script>
+<script src="assets/vendor/ScrollTrigger.min.js"></script>
+<script src="assets/vendor/lucide.min.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/db.js"></script>
+<script src="assets/js/main.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const f = document.getElementById('cform');
+    f.addEventListener('submit', e => {
+      e.preventDefault();
+      const n = document.getElementById('c-n').value.trim();
+      const i = document.getElementById('c-i').value.trim();
+      const m = document.getElementById('c-m').value.trim();
+      const text = `Hola DEFRULE MUSIC, soy ${n}. Me interesa: ${i}. ${m}`;
+      window.open(`https://wa.me/${CONFIG.store.whatsapp}?text=${encodeURIComponent(text)}`, '_blank');
+      toast('Abriendo WhatsApp con tu mensaje…', 'message-circle');
+    });
+    // inyectar icono WA al botón
+    document.getElementById('c-send').insertAdjacentHTML('afterbegin', WA_ICON);
+  });
+</script>
+</body>
+</html>

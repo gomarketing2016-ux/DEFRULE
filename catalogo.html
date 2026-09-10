@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es-CO" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Catálogo — DEFRULE MUSIC</title>
+<meta name="description" content="Explora guitarras eléctricas, percusión y accesorios con filtros por marca, precio, descuento y más.">
+<meta name="theme-color" content="#07080d">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body data-page="catalogo">
+<main>
+  <section class="section" style="padding:48px 0 20px">
+    <div class="container">
+      <span class="eyebrow"><i data-lucide="layout-grid"></i> Catálogo completo</span>
+      <h1 class="h-display" style="font-size:clamp(2rem,4.5vw,3rem)">Encuentra tu <span class="grad">instrumento</span></h1>
+      <p class="lead">Filtra por categoría, marca, precio y descuento. Cada producto te lleva directo a WhatsApp.</p>
+    </div>
+  </section>
+
+  <div class="filters">
+    <div class="container filters-inner">
+      <div class="f-search">
+        <i data-lucide="search"></i>
+        <input id="f-q" type="search" placeholder="Buscar producto, marca o característica…" autocomplete="off">
+      </div>
+
+      <div class="f-select"><select id="f-brand" aria-label="Marca"></select></div>
+      <div class="f-select"><select id="f-price" aria-label="Precio">
+        <option value="all">Precio: todos</option>
+        <option value="p1">Hasta $500 mil</option>
+        <option value="p2">$500 mil – $1.5 M</option>
+        <option value="p3">$1.5 M – $4 M</option>
+        <option value="p4">Más de $4 M</option>
+      </select></div>
+      <div class="f-select"><select id="f-disc" aria-label="Descuento">
+        <option value="all">Descuento: todos</option>
+        <option value="any">Con descuento</option>
+        <option value="10">10% o más</option>
+        <option value="12">12% o más</option>
+      </select></div>
+      <div class="f-select"><select id="f-sort" aria-label="Ordenar">
+        <option value="rec">Recomendados</option>
+        <option value="price-asc">Precio: menor a mayor</option>
+        <option value="price-desc">Precio: mayor a menor</option>
+        <option value="disc">Mayor descuento</option>
+        <option value="rating">Mejor calificados</option>
+      </select></div>
+      <button class="icon-btn" id="f-clear" title="Limpiar filtros" aria-label="Limpiar filtros"><i data-lucide="x"></i></button>
+    </div>
+    <div class="container filters-inner" style="padding-top:12px">
+      <div class="chips">
+        <button class="chip active" data-cat="all"><i data-lucide="layout-grid"></i> Todo</button>
+        <button class="chip" data-cat="guitarras"><i data-lucide="guitar"></i> Guitarras <span id="n-guit"></span></button>
+        <button class="chip" data-cat="percusion"><i data-lucide="drum"></i> Percusión <span id="n-perc"></span></button>
+        <button class="chip" data-cat="accesorios"><i data-lucide="headphones"></i> Accesorios <span id="n-acc"></span></button>
+      </div>
+      <span class="result-count" id="count"></span>
+    </div>
+  </div>
+
+  <section class="section" style="padding-top:34px">
+    <div class="container">
+      <div class="grid-products" id="grid"></div>
+    </div>
+  </section>
+</main>
+
+<script src="assets/vendor/gsap.min.js"></script>
+<script src="assets/vendor/ScrollTrigger.min.js"></script>
+<script src="assets/vendor/lucide.min.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/db.js"></script>
+<script src="assets/js/main.js"></script>
+<script src="assets/js/catalog.js"></script>
+</body>
+</html>
