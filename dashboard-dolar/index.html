@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dólar en Colombia · Panel exploratorio (últimos 6 meses)</title>
+<meta name="description" content="Panel exploratorio y estadístico de la TRM (USD/COP) de los últimos 6 meses: evolución, distribuciones, correlaciones y oportunidades de modelado para la junta directiva.">
+<meta name="theme-color" content="#2c95e6">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232c95e6'/%3E%3Ctext x='32' y='44' font-family='Poppins,Arial,sans-serif' font-size='36' font-weight='700' fill='white' text-anchor='middle'%3E%24%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- Aviso si no se carga ECharts (sin internet) -->
+<div id="echarts-error" hidden>
+  <strong>No se pudo cargar la librería de gráficas (Apache ECharts).</strong>
+  <span>Conecta a internet y recarga la página para ver los gráficos. Las cifras de los indicadores siguen disponibles arriba.</span>
+</div>
+
+<div class="wrap">
+
+  <!-- ============ ENCABEZADO ============ -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40" width="40" height="40"><circle cx="20" cy="20" r="19" fill="none" stroke="#2c95e6" stroke-width="3"/><path d="M26 13.5c-1.4-1.6-3.3-2.3-5.8-2.3-3.4 0-5.6 1.6-5.6 4.4 0 5.8 11.6 3 11.6 9 0 3-2.4 4.7-6 4.7-2.8 0-4.9-1-6.4-2.9M20 7.5v25.5" fill="none" stroke="#2c95e6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="brand-text">
+        <h1>Dólar en Colombia</h1>
+        <p class="brand-sub">Panel exploratorio · TRM oficial · últimos 6 meses</p>
+      </div>
+    </div>
+    <div class="topbar-meta">
+      <span class="meta-pill" id="meta-periodo">—</span>
+      <span class="meta-pill meta-pill-soft" id="meta-n">—</span>
+    </div>
+  </header>
+
+  <!-- ============ FILTROS ============ -->
+  <section class="filters" aria-label="Filtros del panel">
+    <div class="filter-group">
+      <span class="filter-label">Fecha</span>
+      <div class="chips" id="chips-periodo" role="group" aria-label="Periodos rápidos">
+        <button type="button" class="chip" data-preset="1m">1 mes</button>
+        <button type="button" class="chip" data-preset="3m">3 meses</button>
+        <button type="button" class="chip is-active" data-preset="todo">6 meses</button>
+        <button type="button" class="chip" data-preset="mes">Mes actual</button>
+      </div>
+      <div class="date-range">
+        <label class="date-field">Desde
+          <input type="date" id="f-desde" aria-label="Fecha de inicio">
+        </label>
+        <span class="date-sep" aria-hidden="true">→</span>
+        <label class="date-field">Hasta
+          <input type="date" id="f-hasta" aria-label="Fecha de fin">
+        </label>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-label">Vista de la evolución</span>
+      <div class="seg" id="seg-gran" role="group" aria-label="Granularidad">
+        <button type="button" class="seg-btn is-active" data-v="diaria">Diaria</button>
+        <button type="button" class="seg-btn" data-v="semanal">Semanal</button>
+        <button type="button" class="seg-btn" data-v="mensual">Mensual</button>
+      </div>
+      <div class="seg" id="seg-view" role="group" aria-label="Escala">
+        <button type="button" class="seg-btn is-active" data-v="nivel">Nivel (COP)</button>
+        <button type="button" class="seg-btn" data-v="indice">Índice 100</button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-label">Variables a comparar</span>
+      <div class="chips" id="chips-vars" role="group" aria-label="Variables adicionales">
+        <button type="button" class="chip chip-var is-active" data-var="brent"><span class="dot" style="background:#f59f00"></span>Petróleo Brent</button>
+        <button type="button" class="chip chip-var" data-var="dxy"><span class="dot" style="background:#7048e8"></span>Índice del dólar</button>
+        <button type="button" class="chip chip-var" data-var="us10y"><span class="dot" style="background:#12b886"></span>Tasa 10a EE.UU.</button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <span class="filter-label">Correlación</span>
+      <div class="seg" id="seg-metric" role="group" aria-label="Medida de correlación">
+        <button type="button" class="seg-btn is-active" data-v="pearson">Pearson</button>
+        <button type="button" class="seg-btn" data-v="spearman">Spearman</button>
+      </div>
+      <label class="roll-select">Ventana móvil
+        <select id="sel-roll" aria-label="Ventana de correlación móvil">
+          <option value="10">10 días</option>
+          <option value="20">20 días</option>
+          <option value="30" selected>30 días</option>
+        </select>
+      </label>
+    </div>
+
+    <button type="button" class="btn-reset" id="btn-reset" title="Volver a la configuración inicial">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+      Restablecer
+    </button>
+  </section>
+
+  <main>
+
+    <!-- ============ INDICADORES ============ -->
+    <section class="kpis" id="kpis" aria-label="Indicadores clave"></section>
+
+    <!-- ============ 1. EVOLUCION ============ -->
+    <section class="panel" id="sec-evol">
+      <div class="panel-head">
+        <div class="panel-title">
+          <span class="panel-num">1</span>
+          <h2>Evolución del dólar</h2>
+        </div>
+        <p class="panel-sub">TRM diaria en pesos con promedio móvil de 7 días. Activa las variables del panel de filtros para superponerlas; cambia a <em>Índice 100</em> para comparar su movimiento en la misma escala.</p>
+      </div>
+      <div class="chart chart-tall" id="chart-evol" role="img" aria-label="Gráfica de línea de la TRM"></div>
+      <p class="footnote" id="evol-note"></p>
+    </section>
+
+    <div class="grid-2">
+      <!-- ============ 2. HISTOGRAMA ============ -->
+      <section class="panel" id="sec-hist">
+        <div class="panel-head">
+          <div class="panel-title">
+            <span class="panel-num">2</span>
+            <h2>Distribución de la TRM</h2>
+          </div>
+          <p class="panel-sub">Frecuencia de los valores diarios y curva normal ajustada con la media y el desvío de la selección.</p>
+        </div>
+        <div class="chart" id="chart-hist" role="img" aria-label="Histograma de la TRM"></div>
+        <p class="footnote" id="hist-note"></p>
+      </section>
+
+      <!-- ============ 3. BOX MES A MES ============ -->
+      <section class="panel" id="sec-box">
+        <div class="panel-head">
+          <div class="panel-title">
+            <span class="panel-num">&nbsp;</span>
+            <h2>Mes a mes</h2>
+          </div>
+          <p class="panel-sub">Caja: intercuartiles (25–75&nbsp;%) · línea: mediana · bigotes: mínimo y máximo de cada mes.</p>
+        </div>
+        <div class="chart" id="chart-box" role="img" aria-label="Diagrama de caja mensual"></div>
+        <p class="footnote" id="box-note"></p>
+      </section>
+    </div>
+
+    <div class="grid-2">
+      <!-- ============ 4. MAPA DE CALOR ============ -->
+      <section class="panel" id="sec-heat">
+        <div class="panel-head">
+          <div class="panel-title">
+            <span class="panel-num">3</span>
+            <h2>Correlación entre variables</h2>
+          </div>
+          <p class="panel-sub">Cómo se mueven juntas, en el periodo seleccionado, las variaciones diarias de cada variable (de −1 a +1).</p>
+        </div>
+        <div class="chart" id="chart-heat" role="img" aria-label="Matriz de correlación"></div>
+        <p class="footnote" id="heat-note"></p>
+      </section>
+
+      <!-- ============ 5. DISPERSA ============ -->
+      <section class="panel" id="sec-scat">
+        <div class="panel-head">
+          <div class="panel-title">
+            <span class="panel-num">&nbsp;</span>
+            <h2>Par de variables</h2>
+          </div>
+          <p class="panel-sub">
+            Variación diaria de
+            <select id="sel-scatx" class="inline-select" aria-label="Variable en eje horizontal">
+              <option value="brent">Petróleo Brent</option>
+              <option value="dxy">Índice del dólar</option>
+              <option value="us10y">Tasa 10a EE.UU.</option>
+            </select>
+            contra
+            <select id="sel-scaty" class="inline-select" aria-label="Variable en eje vertical">
+              <option value="trm" selected>Dólar (TRM)</option>
+              <option value="brent">Petróleo Brent</option>
+              <option value="dxy">Índice del dólar</option>
+              <option value="us10y">Tasa 10a EE.UU.</option>
+            </select>
+            · <span class="scat-info" id="scat-info">—</span>
+          </p>
+        </div>
+        <div class="chart" id="chart-scat" role="img" aria-label="Dispersa de pares de variables"></div>
+        <p class="footnote">Cada punto es un día hábil. La línea es la recta de mejor ajuste (mínimos cuadrados).</p>
+      </section>
+    </div>
+
+    <!-- ============ 6. CORRELACION MOVIL ============ -->
+    <section class="panel" id="sec-roll">
+      <div class="panel-head">
+        <div class="panel-title">
+          <span class="panel-num">4</span>
+          <h2>La relación cambia con el tiempo</h2>
+        </div>
+        <p class="panel-sub">Correlación de la TRM con cada variable, recalculada cada día sobre una ventana móvil. Una relación no es constante: se fortalece y se debilita.</p>
+      </div>
+      <div class="chart" id="chart-roll" role="img" aria-label="Correlación móvil"></div>
+      <p class="footnote" id="roll-note"></p>
+    </section>
+
+    <!-- ============ 7. OPORTUNIDADES ============ -->
+    <section class="panel panel-ops" id="sec-ops">
+      <div class="panel-head">
+        <div class="panel-title">
+          <span class="panel-num">5</span>
+          <h2>Lo que este dataset nos permite hacer</h2>
+        </div>
+        <p class="panel-sub">Tres oportunidades de análisis propuestas para la junta, explicadas en lenguaje de negocio. Cada una incluye el valor esperado, el esfuerzo y cómo mediremos su éxito.</p>
+      </div>
+
+      <div class="ops-grid">
+
+        <article class="op-card">
+          <div class="op-top">
+            <span class="op-num">O1</span>
+            <span class="op-tag">Predicción</span>
+          </div>
+          <h3>Predecir el dólar a 2–4 semanas</h3>
+          <div class="op-body">
+            <p class="op-what">Una <strong>pronóstica</strong> que diga en cuánto estará el dólar en 2 a 4 semanas, con error menor que la estrategia tonta de “asumir que no se mueve”.</p>
+            <p class="op-label">Qué haríamos</p>
+            <ol class="op-steps">
+              <li>Elegir las variables que en este panel se mueven con el dólar (petróleo, índice del dólar y tasas de EE.UU.).</li>
+              <li>Entrenar un modelo estadístico sobre 6 meses de datos y validarlo en el tramo final, sin que “aprisma” el pasado.</li>
+              <li>Publicar cada semana el pronóstico con su rango de incertidumbre (no un solo número).</li>
+            </ol>
+            <p class="op-label">Para qué sirve</p>
+            <p class="op-use">Planificar precios de compras e importaciones en dólares, armar el calendario de compra de divisas y presupuestar con rangos en lugar de una suposición única.</p>
+          </div>
+          <div class="op-evidence">
+            <span class="op-ev-label">Evidencia en este panel:</span>
+            la TRM varió <strong id="ev-var">—</strong> en 6 meses. Anticipar la caída de junio (3.800 → 3.050) habría cambiado decisiones de compra por millones de pesos.
+          </div>
+          <ul class="op-meta">
+            <li><strong>Esfuerzo</strong>4–6 semanas · 1 analista de datos + 1 revisor de negocio</li>
+            <li><strong>Éxito si</strong>error mediano &lt; 1,5&nbsp;% a 4 semanas y supera al pronóstico “tonto” en ≥ 7 de 12 pruebas</li>
+          </ul>
+        </article>
+
+        <article class="op-card">
+          <div class="op-top">
+            <span class="op-num">O2</span>
+            <span class="op-tag op-tag-warn">Gestión de riesgo</span>
+          </div>
+          <h3>Alertas tempranas de volatilidad</h3>
+          <div class="op-body">
+            <p class="op-what">Una <strong>alarma del dólar</strong>: avisa al tesoro 1 o 2 días antes de que la tasa se mueva de forma anormal, en lugar de enterarnos por el diario.</p>
+            <p class="op-label">Qué haríamos</p>
+            <ol class="op-steps">
+              <li>Medir la volatilidad diaria y definir bandas de “normal” y de “alerta” (±2 desvíos estándar).</li>
+              <li>Detectar quiebres abruptos de tendencia (puntos de cambio), como el desplome de junio 2026.</li>
+              <li>Notificación automática semanal para la junta y el tesoro.</li>
+            </ol>
+            <p class="op-label">Para qué sirve</p>
+            <p class="op-use">Decidir <em>cuándo</em> cubrirnos (comprar dólares o contratos a plazo) sin cerrar a 3.800 lo que iba a 3.050, y precificar con anticipación en vez de con sorpresa.</p>
+          </div>
+          <div class="op-evidence">
+            <span class="op-ev-label">Evidencia en este panel:</span>
+            caída máxima del período <strong id="ev-dd">—</strong>; <strong id="ev-dias2">—</strong> días con movimientos de 1,5&nbsp;% o más en un solo día.
+          </div>
+          <ul class="op-meta">
+            <li><strong>Esfuerzo</strong>2–4 semanas · 1 analista de datos</li>
+            <li><strong>Éxito si</strong>detecta ≥ 80&nbsp;% de los movimientos &gt; 2&nbsp;% con al menos 1 día de anticipación</li>
+          </ul>
+        </article>
+
+        <article class="op-card">
+          <div class="op-top">
+            <span class="op-num">O3</span>
+            <span class="op-tag op-tag-soft">Presupuestos</span>
+          </div>
+          <h3>Simulación de escenarios (Monte Carlo)</h3>
+          <div class="op-body">
+            <p class="op-what">En vez de preguntar “¿en cuánto estará el dólar?”, responder <strong>“¿con qué probabilidad?”</strong>: correr 10.000 futuros simulados del dólar para estimar, por ejemplo, la probabilidad de superar 3.300 en 3 meses y su impacto en pesos.</p>
+            <p class="op-label">Qué haríamos</p>
+            <ol class="op-steps">
+              <li>Calibrar el simulador con los datos (tendencia, volatilidad diaria y saltos extremos observados).</li>
+              <li>Simular escenarios de 3 y 6 meses y calcular percentiles (50, 90, 95).</li>
+              <li>Traducir los resultados a COP para los principales contratos y exposiciones dolarizadas.</li>
+            </ol>
+            <p class="op-label">Para qué sirve</p>
+            <p class="op-use">Presupuestar con intervalos de confianza, fijar topes de exposición al dólar y evaluar si conviene pagar por cubrirnos (plazos vs. opciones).</p>
+          </div>
+          <div class="op-evidence">
+            <span class="op-ev-label">Evidencia en este panel:</span>
+            la volatilidad media es <strong id="ev-vol">—</strong>; el simulador debe reproducir este rango de movimientos para ser confiable.
+          </div>
+          <ul class="op-meta">
+            <li><strong>Esfuerzo</strong>3–5 semanas · 1 analista + comité de riesgo</li>
+            <li><strong>Éxito si</strong>calibración: el rango simulado histórico contiene el real en ≥ 90&nbsp;% de retro-pruebas</li>
+          </ul>
+        </article>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ PIE ============ -->
+  <footer class="foot">
+    <div class="foot-grid">
+      <div>
+        <h4>Fuentes</h4>
+        <ul>
+          <li><strong>TRM (USD/COP)</strong> — Superintendencia Financiera de Colombia, vía datos.gov.co (dataset mcec-87by).</li>
+          <li><strong>Petróleo Brent</strong> — FRED / EIA (DCOILBRENTEU), USD por barril.</li>
+          <li><strong>Índice del dólar</strong> — FRED / BIS (DTWEXBGS), índice amplio, base 2006.</li>
+          <li><strong>Tasa 10a EE.UU.</strong> — FRED (DGS10), en %.</li>
+        </ul>
+        <p>Datos descargados el 15-sep-2026; parrilla de días hábiles colombianos (fecha de vigencia de la TRM).</p>
+      </div>
+      <div>
+        <h4>Metodología</h4>
+        <ul>
+          <li>Media, mediana y percentiles calculados sobre la TRM diaria de la selección; desviación estándar muestral.</li>
+          <li>Correlaciones (Pearson o Spearman) sobre <em>rendimientos logarítmicos diarios</em> en días hábiles; correlación móvil en ventana de N días.</li>
+          <li>Huecos de publicación de FRED (festivos en EE.UU.) rellenados con el último valor disponible.</li>
+          <li>Va “anualizada” = desvío diario × √252, convención de mercados.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="foot-disc">Este panel es una herramienta de discusión para la junta directiva; no constituye asesoría financiera, pronóstico oficial ni recomendación de inversión. · Construido con Apache ECharts · Tipografía Poppins y Open Sans (Google Fonts).</p>
+  </footer>
+
+</div>
+
+<script src="data/datos.js"></script>
+<script>
+/* Carga de ECharts con respaldo de CDN (jsDelivr → unpkg → cdnjs) */
+(function () {
+  var CDNS = [
+    "https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js",
+    "https://unpkg.com/echarts@5.5.1/dist/echarts.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.1/echarts.min.js"
+  ];
+  function tryLoad(i) {
+    if (i >= CDNS.length) {
+      var e = document.getElementById("echarts-error");
+      if (e) e.hidden = false;
+      return;
+    }
+    var s = document.createElement("script");
+    s.src = CDNS[i];
+    s.onload = function () { window.dispatchEvent(new Event("echarts:ready")); };
+    s.onerror = function () { s.remove(); tryLoad(i + 1); };
+    document.head.appendChild(s);
+  }
+  tryLoad(0);
+})();
+</script>
+<script src="js/app.js"></script>
+</body>
+</html>
