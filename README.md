@@ -1,3 +1,12 @@
+# Proyectos del repo
+
+| Carpeta | Qué es |
+|---|---|
+| `index.html` (raíz) | Landing + catálogo Xiaomi (este README original) |
+| [`dashboard-dolar/`](dashboard-dolar/) | **Panel exploratorio del dólar en Colombia (TRM, últimos 6 meses)** — KPIs, distribuciones, correlaciones y 3 oportunidades de modelado para la junta. Apache ECharts · Poppins/Open Sans · responsive. Ver su [README](dashboard-dolar/README.md). |
+
+---
+
 # Landing + catálogo Xiaomi (100 % en un archivo)
 
 Página de venta de tecnología con foco en **Xiaomi / Redmi / POCO / Mijia** para Colombia:
